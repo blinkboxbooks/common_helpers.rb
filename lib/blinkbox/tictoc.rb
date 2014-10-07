@@ -24,12 +24,14 @@ module Blinkbox
     #   # => 3000
     module TicToc
       def tic(label = :default)
-        (@@timers ||= {})[label] = Time.now.utc.to_r
+        last_value = (@@timers ||= {})[label]
+        @@timers[label] = Time.now.utc
+        last_value
       end
 
       def toc(label = :default)
         return nil if @@timers[label].nil?
-        ((Time.now.utc.to_r - @@timers[label]) * 1000).to_f
+        ((Time.now.utc - @@timers[label]) * 1000).to_f
       end
     end
   end
