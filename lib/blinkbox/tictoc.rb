@@ -23,15 +23,37 @@ module Blinkbox
     #   p toc :a
     #   # => 3000
     module TicToc
+      # Starts a timer with the given label. Will return the last value of the timer
+      # if #tic had been called before.
+      #
+      # @param [Symbol] label The label to use.
+      # @return [Time, nil] The Time #tic was called with this label previously
       def tic(label = :default)
         last_value = (@@timers ||= {})[label]
         @@timers[label] = Time.now.utc
         last_value
       end
 
+      # Returns the number of milliseconds since tic (for the same label) was called.
+      # Will return nil if tic has never been called.
+      #
+      # @param [Symbol] label The label to use.
+      # @return [Float, nil] The number of milliseconds since the equivalent #tic was last called.
       def toc(label = :default)
         return nil if @@timers[label].nil?
         ((Time.now.utc - @@timers[label]) * 1000).to_f
+      end
+
+      # Resets the timer for a specific label, or all labels (if none are specified)
+      #
+      # @param [Array<Symbol>] labels The labels to reset
+      # @return [nil]
+      def tictoc_reset(labels = [])
+        @@timers = {} if labels.empty?
+        labels.each do |label|
+          @@timers[label] = nil
+        end
+        nil
       end
     end
   end
